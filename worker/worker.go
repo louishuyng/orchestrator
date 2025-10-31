@@ -9,7 +9,7 @@ import (
 )
 
 type Worker struct {
-	ID        uuid.UUID
+	Name      string
 	Queue     queue.Queue
 	Db        map[uuid.UUID]*task.Task
 	TaskCount int
