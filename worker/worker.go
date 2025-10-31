@@ -1,6 +1,8 @@
 package worker
 
 import (
+	"fmt"
+
 	"github.com/golang-collections/collections/queue"
 	"github.com/google/uuid"
 	"github.com/louishuyng/orchestrator/task"
@@ -11,4 +13,20 @@ type Worker struct {
 	Queue     queue.Queue
 	Db        map[uuid.UUID]*task.Task
 	TaskCount int
+}
+
+func (w *Worker) CollectStats() {
+	fmt.Println("Collecting worker stats...")
+}
+
+func (w *Worker) RunTask() {
+	fmt.Println("Running task...")
+}
+
+func (w *Worker) StartTask() {
+	fmt.Println("Starting task...")
+}
+
+func (w *Worker) StopTask() {
+	fmt.Println("Stopping task...")
 }
