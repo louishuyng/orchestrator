@@ -25,6 +25,14 @@ type DockerResult struct {
 	Result      string
 }
 
+func NewDocker(c *Config) *Docker {
+	dc, _ := client.NewClientWithOpts(client.FromEnv)
+	return &Docker{
+		Client: dc,
+		Config: *c,
+	}
+}
+
 func (d *Docker) Run() DockerResult {
 	ctx := context.Background()
 

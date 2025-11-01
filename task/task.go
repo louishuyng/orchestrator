@@ -3,6 +3,7 @@ package task
 import (
 	"time"
 
+	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
 )
@@ -23,7 +24,7 @@ type Task struct {
 	Name          string
 	State         State
 	Image         string
-	CPU           float64
+	Cpu           float64
 	Memory        int64
 	Disk          int64
 	ExposedPorts  nat.PortSet
@@ -53,4 +54,16 @@ type Config struct {
 	Disk          int64
 	Env           []string
 	RestartPolicy string
+}
+
+func NewConfig(t *Task) *Config {
+	return &Config{
+		Name:          t.Name,
+		ExposedPorts:  t.ExposedPorts,
+		Image:         t.Image,
+		Cpu:           t.Cpu,
+		Memory:        t.Memory,
+		Disk:          t.Disk,
+		RestartPolicy: t.RestartPolicy,
+	}
 }
