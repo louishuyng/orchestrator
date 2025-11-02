@@ -3,7 +3,6 @@ package task
 import (
 	"time"
 
-	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
 )

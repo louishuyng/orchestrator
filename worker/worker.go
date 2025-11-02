@@ -45,10 +45,10 @@ func (w *Worker) RunTask() task.DockerResult {
 
 	if task.ValidStateTransition(taskPersisted.State, taskQueued.State) {
 		switch taskQueued.State {
-		case task.Running:
-			result = w.StartTask(*taskPersisted)
+		case task.Scheduled:
+			result = w.StartTask(taskQueued)
 		case task.Completed:
-			result = w.StopTask(*taskPersisted)
+			result = w.StopTask(taskQueued)
 		default:
 			result.Error = errors.New("unsupported task state transition")
 		}
