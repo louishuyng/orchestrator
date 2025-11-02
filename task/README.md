@@ -1,4 +1,4 @@
-# Task State
+# Task State Diagram
 
 ```mermaid
 stateDiagram-v2
@@ -46,3 +46,12 @@ stateDiagram-v2
     class task_start Condition
     class task_stop Condition
 ```
+
+# State Transition
+| Current State | Event | Next State |
+| - | - | - |
+| Pending | ScheduleEvent | Scheduled |
+| Pending | ScheduleEvent | Failed |
+| Scheduled | StartTask | Running |
+| Scheduled | StartTask | Failed |
+| Running | StopTask | Completed |
