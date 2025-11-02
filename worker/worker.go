@@ -1,6 +1,7 @@
 package worker
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -25,8 +26,38 @@ func (w *Worker) AddTask(t task.Task) {
 	w.Queue.Enqueue(t)
 }
 
-func (w *Worker) RunTask() {
-	fmt.Println("Running task...")
+func (w *Worker) RunTask() task.DockerResult {
+	t := w.Queue.Dequeue()
+	if t == nil {
+		log.Println("No task in the queue")
+		return task.DockerResult{Error: nil}
+	}
+
+	taskQueued := t.(task.Task)
+	taskPersisted := w.Db[taskQueued.ID]
+
+	if taskPersisted == nil {
+		taskPersisted = &taskQueued
+		w.Db[taskQueued.ID] = taskPersisted
+	}
+
+	var result task.DockerResult
+
+	if task.ValidStateTransition(taskPersisted.State, taskQueued.State) {
+		switch taskQueued.State {
+		case task.Running:
+			result = w.StartTask(*taskPersisted)
+		case task.Completed:
+			result = w.StopTask(*taskPersisted)
+		default:
+			result.Error = errors.New("unsupported task state transition")
+		}
+	} else {
+		err := fmt.Errorf("invalid state transition from %s to %s for task %s", taskPersisted.State, taskQueued.State, taskPersisted.ID)
+		result.Error = err
+	}
+
+	return result
 }
 
 func (w *Worker) StopTask(t task.Task) task.DockerResult {
