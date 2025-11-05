@@ -16,10 +16,16 @@ type Worker struct {
 	Queue     queue.Queue
 	Db        map[uuid.UUID]*task.Task
 	TaskCount int
+	Stats     *Stats
 }
 
 func (w *Worker) CollectStats() {
-	fmt.Println("Collecting worker stats...")
+	for {
+		log.Printf("Worker %s collecting stats...", w.Name)
+		w.Stats = GetStats()
+		w.Stats.TaskCount = w.TaskCount
+		time.Sleep(10 * time.Second)
+	}
 }
 
 func (w *Worker) GetTasks() []*task.Task {
