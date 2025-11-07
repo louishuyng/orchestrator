@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/golang-collections/collections/queue"
 	"github.com/google/uuid"
@@ -94,6 +95,14 @@ func (m *Manager) UpdateTasks() {
 
 	}
 }
+func (m *Manager) ProcessTasks() {
+	for {
+		log.Println("Processing any tasks in the queue")
+		m.SendWork()
+		log.Println("Sleeping for 10 seconds")
+		time.Sleep(10 * time.Second)
+	}
+}
 
 func (m *Manager) SendWork() {
 	if m.Pending.Len() > 0 {
@@ -146,6 +155,14 @@ func (m *Manager) SendWork() {
 	} else {
 		log.Println("No work in the queue")
 	}
+}
+
+func (m *Manager) GetTasks() []*task.Task {
+	tasks := []*task.Task{}
+	for _, t := range m.TaskDb {
+		tasks = append(tasks, t)
+	}
+	return tasks
 }
 
 func (m *Manager) AddTask(te task.TaskEvent) {
