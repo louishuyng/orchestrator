@@ -44,10 +44,7 @@ func (d *Docker) Run() DockerResult {
 	}
 
 	io.Copy(os.Stdout, reader)
-
-	rp := container.RestartPolicy{
-		Name: d.Config.RestartPolicy,
-	}
+	rp := container.RestartPolicy{Name: d.Config.RestartPolicy}
 
 	r := container.Resources{
 		Memory:   d.Config.Memory,
@@ -119,4 +116,15 @@ func (d *Docker) Stop(containerID string) DockerResult {
 		ContainerID: containerID,
 		Result:      "success",
 	}
+}
+
+func (d *Docker) Inspect(containerID string) DockerInspectResponse {
+	ctx := context.Background()
+	resp, err := d.Client.ContainerInspect(ctx, containerID)
+	if err != nil {
+		log.Printf("Error inspecting container: %s\n", err)
+		return DockerInspectResponse{Error: err}
+	}
+
+	return DockerInspectResponse{Container: &resp}
 }

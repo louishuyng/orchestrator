@@ -1,4 +1,4 @@
-package worker
+package main
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ func main() {
 	mhost := os.Getenv("CUBE_MANAGER_HOST")
 	mport, _ := strconv.Atoi(os.Getenv("CUBE_MANAGER_PORT"))
 
-	fmt.Println("Starting Cube worker")
+	fmt.Println("Starting Cube worker at", whost, wport)
 
 	w := worker.Worker{
 		Queue: *queue.New(),
@@ -29,9 +29,10 @@ func main() {
 
 	go w.RunTasks()
 	go w.CollectStats()
+	go w.UpdateTasks()
 	go wapi.Start()
 
-	fmt.Println("Starting Cube manager")
+	fmt.Println("Starting Cube manager at", mhost, mport)
 
 	workers := []string{fmt.Sprintf("%s:%d", whost, wport)}
 	m := manager.New(workers)
@@ -39,6 +40,7 @@ func main() {
 
 	go m.ProcessTasks()
 	go m.UpdateTasks()
+	go m.DoHealthChecks()
 
 	mapi.Start()
 

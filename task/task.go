@@ -3,6 +3,7 @@ package task
 import (
 	"time"
 
+	"github.com/docker/docker/api/types"
 	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
 )
@@ -31,6 +32,9 @@ type Task struct {
 	RestartPolicy string
 	StartTime     time.Time
 	FinishTime    time.Time
+	HealthCheck   string
+	RestartCount  int
+	HostPorts     nat.PortMap
 }
 
 type TaskEvent struct {
@@ -53,6 +57,11 @@ type Config struct {
 	Disk          int64
 	Env           []string
 	RestartPolicy string
+}
+
+type DockerInspectResponse struct {
+	Error     error
+	Container *types.ContainerJSON
 }
 
 func NewConfig(t *Task) *Config {
